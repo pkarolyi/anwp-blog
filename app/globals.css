@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Need to set most css properties here as we cannot style mdx directly */
+
+body {
+  @apply text-stone-900 bg-white antialiased text-lg sm:text-xl;
+}
+
+h1 {
+  @apply text-4xl font-bold;
+}
+
+h2 {
+  @apply text-3xl font-semibold mt-10 border-b-stone-300 border-b-2 pb-1;
+}
+
+h3 {
+  @apply text-2xl font-semibold mt-4;
+}
+
+h4 {
+  @apply text-xl font-semibold;
+}
+
+p {
+  @apply mt-2;
+}
+
+ul {
+  @apply list-disc list-inside my-2;
+}
+
+li {
+  @apply mt-2;
+}
+
+ul ul {
+  @apply ml-4 my-0 no-underline;
+}
+
+a {
+  @apply text-sky-700 hover:text-sky-800;
+}
+
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a {
+  @apply text-stone-900 no-underline hover:text-stone-900;
+}
+
+pre {
+  @apply my-4 py-2 rounded-lg !bg-stone-100 overflow-x-scroll;
+}
+
+code {
+  @apply !bg-stone-100 !text-base sm:!text-lg px-2 rounded-md;
+}
+
+pre > code {
+  @apply grid !text-sm sm:!text-base !bg-inherit !px-0 !rounded-none;
+  counter-reset: line;
+}
+
+code > [data-line] {
+  @apply border-l-2 border-l-transparent px-6;
+}
+
+code[data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+
+  @apply inline-block w-4 mr-4 text-right text-gray-500;
+}
+
+code > [data-highlighted-line] {
+  @apply bg-yellow-50 border-l-yellow-500;
+}

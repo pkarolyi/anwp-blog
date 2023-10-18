@@ -1,39 +1,27 @@
 import Mermaid from "@/components/mermaid";
 
-# NextJs Metamask Authentication with NextAuth
+# Next.js: How to authenticate with Metamask through NextAuth
 
-## Purpose
+## Contents
 
-This project demonstrates how to authenticate with [Metamask](https://metamask.io/) using [Next.js](https://nextjs.org) and [NextAuth.js](https://next-auth.js.org).
+## Introduction
 
-The same structure and idea can be used for authentication using any other crypto wallet that has a browser extension.
+This tutorial will show you how to authenticate with [Metamask](https://metamask.io/) using [Next.js](https://nextjs.org) and [NextAuth.js](https://next-auth.js.org). The same structure and idea can be used for authentication using any other crypto wallet that has a browser extension.
 
 This example stores the generated nonce in a database with the user data. To use a database with NextAuth you need to set up an adapter. See the [docs](https://next-auth.js.org/adapters/overview) for more information about the available adapters. For this example we used [Prisma](https://www.prisma.io/) with SQLite for ease of implementation. For production environments please don't use SQLite.
 
-## Getting Started
+The full implementation can be found on GitHub: [https://github.com/pkarolyi/nextjs-nextauth-metamask](https://github.com/pkarolyi/nextjs-nextauth-metamask).
+
+## Step-by-step tutorial
 
 ### Prerequisites
 
 - [NodeJS ^18.15](https://nodejs.org/en/)
 - [Yarn ^1.22](https://yarnpkg.com/)
 
-### Quickstart
-
-```bash
-git clone https://github.com/DakaiGroup/nextjs-nextauth-metamask.git
-cd nextjs-nextauth-metamask
-yarn
-yarn prisma migrate dev
-yarn dev
-```
-
-Open [localhost:3000](http://localhost:3000) in your browser to see the result.
-
-## How it works (build your own tutorial)
-
 ### Start project and install dependencies
 
-To get started create a new Next.js project based on the official Next.js documentation:
+To get started create a new Next.js project based on the official Next.js documentation (if asked, use the `pages` router):
 
 ```bash
 yarn create next-app --typescript
@@ -58,7 +46,7 @@ Create the [models required](https://next-auth.js.org/adapters/models) by NextAu
 
 We need to extend this schema to support crypto wallet based login. We need to save the `publicAddress` of the user in the `User` table as a unique field so we can use it to identify the user with that instead of email. We also need to save a `nonce` and an `expires` field with the user either in the `User` table or preferably in it's own table. These fields are used to store the secure random nonce we will generate for signing. For ease of implementation every user can have no more than one active nonce associated with them.
 
-See the completed schema in [prisma/schema.prisma](prisma/schema.prisma).
+See the completed schema in `prisma/schema.prisma`.
 
 To update the database with the schema run:
 
@@ -71,6 +59,7 @@ yarn prisma migrate dev
 For easier understanding of the following sections here is a data flow diagram:
 
 <Mermaid
+  width={90}
   chart={`
 sequenceDiagram
   participant W as Wallet
@@ -146,9 +135,9 @@ export default async function generateNonce(
 }
 ```
 
-The full implementation of this endpoint with explanatory comments is at [pages/api/auth/crypto/generateNonce.ts](pages/api/auth/crypto/generateNonce.ts).
+The full implementation of this endpoint with explanatory comments is in the repo at [pages/api/auth/crypto/generateNonce.ts](https://github.com/pkarolyi/nextjs-nextauth-metamask/blob/main/pages/api/auth/crypto/generateNonce.ts).
 
-Other than that we need to configure NextAuth to accept our custom authentication method. We need to create [[...nextauth].ts](/pages/api/auth/[...nextauth].ts) in `/pages/api/auth`. The configuration options are available in the NextAuth [documentation](https://next-auth.js.org/configuration/options).
+Other than that we need to configure NextAuth to accept our custom authentication method. We need to create `[...nextauth].ts` in `/pages/api/auth`. The configuration options are available in the NextAuth [documentation](https://next-auth.js.org/configuration/options).
 
 We need to add a custom provider, let's call it `crypto` with the following parameters:
 
@@ -207,11 +196,11 @@ async function authorizeCrypto(
 }
 ```
 
-The full implementation can be found under [pages/api/auth/[...nextauth].ts](pages/api/auth/[...nextauth].ts).
+The full implementation can be found in the repository under [pages/api/auth/[...nextauth].ts](https://github.com/pkarolyi/nextjs-nextauth-metamask/blob/main/pages/api/auth/%5B...nextauth%5D.ts).
 
 ### Create frontend components
 
-First we replace the contents of [pages/index.tsx](pages/index.tsx) with the following:
+First we replace the contents of `pages/index.tsx` with the following:
 
 ```typescript
 import { signOut, useSession } from "next-auth/react";
@@ -239,7 +228,7 @@ export default function Home() {
 
 Here we use `NextAuth` to check whether the user has a valid session. If they don't we redirect them to `/auth`. If they are authenticated then we display the content available to logged in users. There is a button for logging out.
 
-Then [pages/auth.tsx](pages/auth.tsx) is created as follows:
+Then `pages/auth.tsx` is created as follows:
 
 ```typescript
 import { ethers } from "ethers";
@@ -318,4 +307,4 @@ This method enables authenticating your users in a secure way without requiring 
 
 - The example project has no error handling. If used in production you should be planning for errors and edge cases.
 - This has nothing to do with [Sign-in with Ethereum](https://login.xyz/), this implementation uses [ethers](https://docs.ethers.org/v5/) to sign a nonce with the user's wallet to prove their ownership of the public address that identifies them.
-- As this is just a barebones example feel free to raise any security issues here on Github.
+- As this is just a barebones example feel free to raise any security issues in the Github repo.

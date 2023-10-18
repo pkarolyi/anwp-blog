@@ -1,29 +1,38 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import mermaid from "mermaid";
 
 export default function Mermaid({
   chart,
-  theme = "default",
+  width,
 }: {
   chart: string;
-  theme: string;
+  width: number;
 }) {
-  const divRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    const renderDiagram = async (div: HTMLDivElement) => {
-      mermaid.initialize({
-        theme,
-      });
+    mermaid.initialize({
+      theme: "default",
+      fontFamily:
+        'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    });
+    mermaid.run();
+  }, []);
 
-      const { svg } = await mermaid.render(window.crypto.randomUUID(), chart);
-      div.innerHTML = svg;
-    };
-    if (divRef.current !== null) {
-      renderDiagram(divRef.current);
-    }
-  }, [divRef, chart, theme]);
-
-  return <div className="mermaid" ref={divRef}></div>;
+  return (
+    <div
+      className="mermaid my-8"
+      style={
+        width
+          ? {
+              width: "" + width + "vw",
+              position: "relative",
+              left: "50%",
+              marginLeft: "-" + width / 2 + "vw",
+            }
+          : {}
+      }
+    >
+      {chart}
+    </div>
+  );
 }
