@@ -3,6 +3,5 @@ export default function PostLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Create any shared layout or styles here
-  return <div style={{ color: "blue" }}>{children}</div>;
+  return <div>{children}</div>;
 }
