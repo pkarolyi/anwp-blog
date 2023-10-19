@@ -1,6 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import mermaid from "mermaid";
+import { useEffect } from "react";
+import Sizable from "./sizable";
 
 export default function Mermaid({
   chart,
@@ -19,20 +20,8 @@ export default function Mermaid({
   }, []);
 
   return (
-    <div
-      className="mermaid my-8"
-      style={
-        width
-          ? {
-              width: "" + width + "vw",
-              position: "relative",
-              left: "50%",
-              marginLeft: "-" + width / 2 + "vw",
-            }
-          : {}
-      }
-    >
+    <Sizable className="mermaid my-8" width={width}>
       {chart}
-    </div>
+    </Sizable>
   );
 }
