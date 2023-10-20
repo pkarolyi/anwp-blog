@@ -1,32 +1,29 @@
 import { compileMDX as compileMDXR } from "next-mdx-remote/rsc";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeExternalLinks from "rehype-external-links";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import remarkTOC from "remark-toc";
+import rehypeAutolinkHeadings, {
+  Options as AutolinkHeadingsOptions,
+} from "rehype-autolink-headings";
+import rehypeExternalLinks, {
+  Options as ExternalLinksOptions,
+} from "rehype-external-links";
+import rehypePrettyCode, {
+  Options as PrettyCodeOptions,
+} from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
 
 import Mermaid from "@/components/mermaid";
 
-/** @type {import('remark-toc').Options} */
-const TOCOptions = {
-  maxDepth: 3,
-};
-
-/** @type {import('rehype-pretty-code').Options} */
-const prettyCodeOptions = {
+const prettyCodeOptions: PrettyCodeOptions = {
   theme: "github-light", //slack-ochin
   defaultLang: "plaintext",
 };
 
-/** @type {import('rehype-external-links').Options} */
-const externalLinksOptions = {
+const externalLinksOptions: ExternalLinksOptions = {
   target: "_blank",
   rel: ["noopener"],
 };
 
-/** @type {import('rehype-autolink-headings').Options} */
-const autolinkHeadingsOptions = {
+const autolinkHeadingsOptions: AutolinkHeadingsOptions = {
   behavior: "wrap",
 };
 
@@ -38,7 +35,7 @@ export function compileMDX({ source }: { source: string }) {
     options: {
       parseFrontmatter: true,
       mdxOptions: {
-        remarkPlugins: [[remarkGfm], [remarkTOC, TOCOptions]],
+        remarkPlugins: [[remarkGfm]],
         rehypePlugins: [
           [rehypeSlug],
           [rehypeAutolinkHeadings, autolinkHeadingsOptions],
