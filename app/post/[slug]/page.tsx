@@ -1,4 +1,6 @@
 import fs from "fs/promises";
+import matter from "gray-matter";
+import { Metadata, ResolvingMetadata } from "next";
 import path from "path";
 
 import PostMeta from "@/components/post_meta";
@@ -7,17 +9,43 @@ import { frontmatterSchema } from "@/validators/mdx";
 
 import styles from "./page.module.css";
 
+type Props = {
+  params: { slug: string };
+};
+
 export async function generateStaticParams() {
   const fileNames = await fs.readdir(path.join("posts"));
 
   return fileNames.map((fileName) => ({ slug: fileName.split(".")[0] }));
 }
 
-export default async function PostPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const source = await fs.readFile(
+    path.join("posts", `${params.slug}.mdx`),
+    "utf-8"
+  );
+
+  const { data: frontmatter } = matter(source);
+
+  const f = frontmatterSchema.parse(frontmatter);
+
+  return {
+    title: f.title,
+    description: f.description,
+    authors: [f.author],
+    keywords: f.tags,
+    openGraph: {
+      title: f.title,
+      description: f.description,
+      images: f.coverSrc ? [f.coverSrc] : [],
+    },
+  };
+}
+
+export default async function PostPage({ params }: Props) {
   const source = await fs.readFile(
     path.join("posts", `${params.slug}.mdx`),
     "utf-8"

@@ -8,9 +8,13 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ANWP Blog",
+  metadataBase: new URL("https://anwp.blog"),
+  title: {
+    template: "%s | anwp",
+    default: "anwp",
+  },
   description:
-    "The blog. The blog of ANWP, the blog specifically written by ANWP. ANWP Blog. That blog?",
+    "The blog. The blog of anwp, the blog specifically written by anwp, anwp blog. That blog?",
 };
 
 export default function RootLayout({
