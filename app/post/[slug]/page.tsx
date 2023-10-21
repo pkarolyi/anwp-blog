@@ -15,8 +15,11 @@ type Props = {
 
 export async function generateStaticParams() {
   const fileNames = await fs.readdir(path.join("posts"));
+  const postFileNames = fileNames.filter((fileName) =>
+    fileName.endsWith(".mdx")
+  );
 
-  return fileNames.map((fileName) => ({ slug: fileName.split(".")[0] }));
+  return postFileNames.map((fileName) => ({ slug: fileName.split(".")[0] }));
 }
 
 export async function generateMetadata(

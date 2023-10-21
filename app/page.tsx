@@ -7,8 +7,12 @@ import path from "path";
 async function getPosts() {
   const fileNames = await fs.readdir(path.join("posts"));
 
+  const postFileNames = fileNames.filter((fileName) =>
+    fileName.endsWith(".mdx")
+  );
+
   const files = await Promise.all(
-    fileNames.map(async (fileName) => ({
+    postFileNames.map(async (fileName) => ({
       fileName,
       content: await fs.readFile(path.join("posts", fileName), "utf-8"),
     }))
