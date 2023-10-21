@@ -18,23 +18,17 @@ async function getPosts() {
     }))
   );
 
-  const posts = files.map((file) => {
-    const { data } = matter(file.content);
-
-    const slug = file.fileName.split(".")[0];
-    const frontmatter = frontmatterSchema.parse(data);
-
-    return {
-      frontmatter,
-      slug,
-    };
-  });
-
-  posts.sort(
-    (a, b) =>
-      new Date(b.frontmatter.date).getTime() -
-      new Date(a.frontmatter.date).getTime()
-  );
+  const posts = files
+    .map((file) => ({
+      slug: file.fileName.split(".")[0],
+      frontmatter: frontmatterSchema.parse(matter(file.content).data),
+    }))
+    .filter(({ frontmatter }) => new Date(frontmatter.date) < new Date())
+    .sort(
+      (a, b) =>
+        new Date(b.frontmatter.date).getTime() -
+        new Date(a.frontmatter.date).getTime()
+    );
 
   return posts;
 }
