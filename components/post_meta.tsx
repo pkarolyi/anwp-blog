@@ -1,5 +1,6 @@
 import { Frontmatter } from "@/validators/mdx";
 import Image from "next/image";
+import DateDisplay from "./date_display";
 
 export default function PostMeta({
   frontmatter,
@@ -19,13 +20,7 @@ export default function PostMeta({
           />
           <div>
             <p className="font-semibold">{frontmatter.author.name}</p>
-            <time dateTime={new Date(frontmatter.date).toISOString()}>
-              {new Date(frontmatter.date).toLocaleString("en-US", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
-            </time>
+            <DateDisplay dateStr={frontmatter.date} />
           </div>
         </div>
       </a>
