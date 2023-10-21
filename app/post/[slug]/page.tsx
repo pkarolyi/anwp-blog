@@ -40,7 +40,8 @@ export async function generateMetadata(
     openGraph: {
       title: f.title,
       description: f.description,
-      images: f.coverSrc ? [f.coverSrc] : [],
+      images: f.coverSrc ? [f.coverSrc] : ["/covers/default.jpg"],
+      url: `https://anwp.blog/post/${params.slug}`,
     },
   };
 }

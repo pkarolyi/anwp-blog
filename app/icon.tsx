@@ -13,7 +13,7 @@ export default function Icon() {
           fontSize: 24,
           color: "rgb(12, 10, 9)",
           background:
-            "linear-gradient(to right top, rgb(103, 232, 249), rgb(147, 197, 253))",
+            "linear-gradient(to right top, rgb(214, 211, 209), rgb(245, 245, 244))",
           width: "100%",
           height: "100%",
           display: "flex",
