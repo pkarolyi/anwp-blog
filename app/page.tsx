@@ -26,6 +26,12 @@ async function getPosts() {
     };
   });
 
+  posts.sort(
+    (a, b) =>
+      new Date(b.frontmatter.date).getTime() -
+      new Date(a.frontmatter.date).getTime()
+  );
+
   return posts;
 }
 
@@ -34,13 +40,17 @@ export default async function Home() {
 
   return (
     <main className="mx-auto max-w-6xl py-12">
-      <h1 className="text-4xl font-bold ">anwp blog</h1>
-
-      <div className="mt-16 grid grid-flow-row grid-cols-3 gap-6">
-        {posts.map((post) => (
-          <PostCard key={post.slug} post={post} />
-        ))}
-      </div>
+      <PostCard post={posts[0]} variant="full" />
+      {posts.length > 1 && (
+        <>
+          <h2 className="mt-8 text-3xl font-semibold">recent posts</h2>
+          <div className="mt-4 grid grid-flow-row grid-cols-3 gap-6">
+            {posts.slice(1).map((post) => (
+              <PostCard key={post.slug} post={post} variant="sm" />
+            ))}
+          </div>
+        </>
+      )}
     </main>
   );
 }

@@ -8,7 +8,8 @@ export const frontmatterSchema = z.object({
     url: z.string(),
   }),
   date: z.string(),
-  description: z.string().optional(),
+  description: z.string(),
+  summary: z.string().optional(),
   coverSrc: z.string().optional(),
   tags: z.string().array().optional(),
 });
