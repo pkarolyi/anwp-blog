@@ -7,23 +7,32 @@ type PostCardProps = {
   post: { slug: string; frontmatter: Frontmatter };
 };
 
-type Variants = {
-  variant: "sm" | "full";
+type PostCardSmProps = PostCardProps & {
+  summary: boolean;
 };
 
-function PostCardSm({ post }: PostCardProps) {
+type Variants = {
+  variant: "sm" | "sm-summary" | "full";
+};
+
+function PostCardSm({ post, summary }: PostCardSmProps) {
   return (
     <Link href={`/post/${post.slug}`}>
-      <div className="max-w-sm w-full rounded-lg overflow-hidden bg-gradient-to-tr from-stone-50 to-stone-300 transition-shadow duration-200 hover:shadow-md">
+      <div className="w-full rounded-lg overflow-hidden bg-gradient-to-tr from-stone-50 to-stone-300 transition-shadow duration-200 hover:shadow-md">
         <Image
           src={post.frontmatter.coverSrc ?? "/covers/default.jpg"}
           alt="post cover image"
           width={384}
           height={200}
-          className="object-cover w-[384px] h-[200px]"
+          className="object-cover w-full h-[200px]"
         />
         <div className="py-4 px-4">
           <h2 className="font-semibold text-lg">{post.frontmatter.title}</h2>
+          {summary && (
+            <p className="mt-2 mb-4">
+              {post.frontmatter.summary ?? post.frontmatter.description}
+            </p>
+          )}
           <div className="mt-2 flex items-center gap-4">
             <Image
               src={post.frontmatter.author.imageSrc}
@@ -44,7 +53,7 @@ function PostCardFull({ post }: PostCardProps) {
   return (
     <Link href={`/post/${post.slug}`}>
       <div className="w-full flex justify-between rounded-lg overflow-hidden bg-gradient-to-tr from-stone-50 to-stone-300 transition-shadow duration-200 hover:shadow-md">
-        <div className="flex-1 p-8 flex flex-col justify-between">
+        <div className="flex-auto lg:flex-1 p-8 flex flex-col justify-between">
           <div>
             <h2 className="font-semibold text-xl">{post.frontmatter.title}</h2>
             <p className="mt-2">
@@ -67,7 +76,7 @@ function PostCardFull({ post }: PostCardProps) {
           alt="post cover image"
           width={768}
           height={400}
-          className="object-cover w-[768px] h-[400px]"
+          className="flex-1 lg:flex-none object-cover max-w-md lg:max-w-lg xl:max-w-2xl"
         />
       </div>
     </Link>
@@ -77,7 +86,9 @@ function PostCardFull({ post }: PostCardProps) {
 export default function PostCard({ post, variant }: PostCardProps & Variants) {
   switch (variant) {
     case "sm":
-      return <PostCardSm post={post} />;
+      return <PostCardSm post={post} summary={false} />;
+    case "sm-summary":
+      return <PostCardSm post={post} summary={true} />;
     case "full":
       return <PostCardFull post={post} />;
   }

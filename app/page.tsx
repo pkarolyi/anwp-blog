@@ -39,12 +39,17 @@ export default async function Home() {
   const posts = await getPosts();
 
   return (
-    <main className="mx-auto max-w-6xl py-12">
-      <PostCard post={posts[0]} variant="full" />
+    <main className="mx-auto max-w-6xl py-12 px-4 2xl:px-0">
+      <div className="block md:hidden">
+        <PostCard post={posts[0]} variant="sm-summary" />
+      </div>
+      <div className="hidden md:block">
+        <PostCard post={posts[0]} variant="full" />
+      </div>
       {posts.length > 1 && (
         <>
           <h2 className="mt-8 text-3xl font-semibold">recent posts</h2>
-          <div className="mt-4 grid grid-flow-row grid-cols-3 gap-6">
+          <div className="mt-4 grid grid-flow-row grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
             {posts.slice(1).map((post) => (
               <PostCard key={post.slug} post={post} variant="sm" />
             ))}
