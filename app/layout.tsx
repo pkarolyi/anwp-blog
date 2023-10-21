@@ -28,7 +28,7 @@ export default function RootLayout({
         className={`${inter.className} text-stone-900 bg-white antialiased`}
       >
         <Navbar />
-        {children}
+        <main className="mx-auto max-w-6xl py-12 px-4 xl:px-0">{children}</main>
       </body>
     </html>
   );

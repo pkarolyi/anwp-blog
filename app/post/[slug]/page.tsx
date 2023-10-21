@@ -60,8 +60,8 @@ export default async function PostPage({ params }: Props) {
   const f = frontmatterSchema.parse(frontmatter);
 
   return (
-    <main className="xl:flex pt-12 pb-6 px-4 xl:px-0">
-      <div className="grow max-w-6xl">
+    <div className="pb-6 px-4 xl:flex xl:justify-center xl:gap-12 xl:px-0">
+      <div className="xl:grow xl:max-w-6xl">
         <article className={`${styles.post} max-w-4xl mx-auto`}>
           <h1>{f.title}</h1>
           <div className="block xl:hidden mt-6">
@@ -73,6 +73,6 @@ export default async function PostPage({ params }: Props) {
       <div className="w-full max-w-xs hidden xl:block">
         <PostMeta frontmatter={f} />
       </div>
-    </main>
+    </div>
   );
 }

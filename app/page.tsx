@@ -43,7 +43,7 @@ export default async function Home() {
   const posts = await getPosts();
 
   return (
-    <main className="mx-auto max-w-6xl py-12 px-4 2xl:px-0">
+    <div>
       <div className="block md:hidden">
         <PostCard post={posts[0]} variant="sm-summary" />
       </div>
@@ -60,6 +60,6 @@ export default async function Home() {
           </div>
         </>
       )}
-    </main>
+    </div>
   );
 }
