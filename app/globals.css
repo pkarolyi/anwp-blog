@@ -1,15 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --navbar-height: 64px;
-}
-
-html {
-  scroll-padding-top: var(--navbar-height);
-}
-
-.navbar {
-  height: var(--navbar-height);
-}
