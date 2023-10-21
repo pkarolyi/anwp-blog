@@ -9,7 +9,11 @@ export default function PostMeta({
 }) {
   return (
     <>
-      <a href={frontmatter.author.url ?? ""} target="_blank">
+      <a
+        href={frontmatter.author.url ?? ""}
+        target="_blank"
+        className="!text-stone-900 hover:!text-stone-900"
+      >
         <div className="flex items-center gap-4">
           <Image
             src={frontmatter.author.imageSrc}
