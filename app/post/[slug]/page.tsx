@@ -8,6 +8,7 @@ import { compileMDX } from "@/lib/mdx";
 import { frontmatterSchema } from "@/validators/mdx";
 
 import styles from "./page.module.css";
+import readingTime from "reading-time";
 
 type Props = {
   params: { slug: string };
@@ -35,6 +36,8 @@ export async function generateMetadata(
 
   const f = frontmatterSchema.parse(frontmatter);
 
+  const timeStats = readingTime(source);
+
   return {
     title: f.title,
     description: f.description,
@@ -45,6 +48,12 @@ export async function generateMetadata(
       description: f.description,
       images: f.coverSrc ? [f.coverSrc] : ["/covers/default.jpg"],
       url: `https://anwp.blog/post/${params.slug}`,
+    },
+    other: {
+      "twitter:label1": "Author",
+      "twitter:data1": f.author.name,
+      "twitter:label2": "Est. reading time",
+      "twitter:data2": timeStats.text,
     },
   };
 }
