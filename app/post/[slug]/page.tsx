@@ -38,6 +38,16 @@ export async function generateMetadata(
 
   const timeStats = readingTime(source);
 
+  const imageUrl = new URL("https://anwp.blog/cover-image");
+  imageUrl.searchParams.append("title", f.title);
+  imageUrl.searchParams.append(
+    "imagePath",
+    f.coverSrc || "/covers/default.jpg"
+  );
+  imageUrl.searchParams.append("authorName", f.author.name);
+  imageUrl.searchParams.append("authorImagePath", f.author.imageSrc);
+  imageUrl.searchParams.append("date", f.date);
+
   return {
     title: f.title,
     description: f.description,
@@ -46,7 +56,7 @@ export async function generateMetadata(
     openGraph: {
       title: f.title,
       description: f.description,
-      images: f.coverSrc ? [f.coverSrc] : ["/covers/default.jpg"],
+      images: [imageUrl],
       url: `https://anwp.blog/post/${params.slug}`,
     },
     other: {

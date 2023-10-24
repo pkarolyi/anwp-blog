@@ -8,26 +8,24 @@ export default function PostMeta({
   frontmatter: Frontmatter;
 }) {
   return (
-    <>
-      <a
-        href={frontmatter.author.url ?? ""}
-        target="_blank"
-        className="!text-stone-900 hover:!text-stone-900"
-      >
-        <div className="flex items-center gap-4">
-          <Image
-            src={frontmatter.author.imageSrc}
-            alt={`Image of ${frontmatter.author.name}`}
-            width={64}
-            height={64}
-            className="rounded-full h-[64px] border-2 border-stone-200"
-          />
-          <div>
-            <p className="font-semibold">{frontmatter.author.name}</p>
-            <DateDisplay dateStr={frontmatter.date} />
-          </div>
+    <a
+      href={frontmatter.author.url ?? ""}
+      target="_blank"
+      className="!text-stone-900 hover:!text-stone-900"
+    >
+      <div className="flex items-center gap-4">
+        <Image
+          src={frontmatter.author.imageSrc}
+          alt={`Image of ${frontmatter.author.name}`}
+          width={64}
+          height={64}
+          className="rounded-full h-[64px] border-2 border-stone-200"
+        />
+        <div>
+          <p className="font-semibold">{frontmatter.author.name}</p>
+          <DateDisplay dateStr={frontmatter.date} />
         </div>
-      </a>
-    </>
+      </div>
+    </a>
   );
 }
