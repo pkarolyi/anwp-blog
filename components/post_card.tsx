@@ -2,6 +2,7 @@ import { Frontmatter } from "@/validators/mdx";
 import Image from "next/image";
 import Link from "next/link";
 import DateDisplay from "./date_display";
+import AuthorImage from "./author_image";
 
 type PostCardProps = {
   post: { slug: string; frontmatter: Frontmatter };
@@ -29,17 +30,18 @@ function PostCardSm({ post, summary }: PostCardSmProps) {
         <div className="py-4 px-4">
           <h2 className="font-semibold text-lg">{post.frontmatter.title}</h2>
           {summary && (
-            <p className="mt-2 mb-4">
-              {post.frontmatter.summary ?? post.frontmatter.description}
-            </p>
+            <>
+              <hr className="h-1 mt-2 bg-gradient-to-br from-teal-400 to-emerald-300" />
+              <p className="mt-4 mb-4">
+                {post.frontmatter.summary ?? post.frontmatter.description}
+              </p>
+            </>
           )}
-          <div className="mt-2 flex items-center gap-4">
-            <Image
+          <div className="mt-4 flex items-center gap-4">
+            <AuthorImage
               src={post.frontmatter.author.imageSrc}
-              alt={post.frontmatter.author.name}
-              width={32}
-              height={32}
-              className="rounded-full h-[32px] border-2 border-stone-200"
+              name={post.frontmatter.author.name}
+              size={32}
             />
             <DateDisplay dateStr={post.frontmatter.date} />
           </div>
@@ -52,21 +54,20 @@ function PostCardSm({ post, summary }: PostCardSmProps) {
 function PostCardFull({ post }: PostCardProps) {
   return (
     <Link href={`/post/${post.slug}`}>
-      <div className="w-full flex justify-between rounded-lg overflow-hidden bg-gradient-to-tr from-stone-50 to-stone-300 transition-shadow duration-200 hover:shadow-md">
+      <div className="w-full flex justify-between rounded-lg overflow-hidden bg-gradient-to-tr from-stone-100 to-stone-300 transition-shadow duration-200 hover:shadow-md">
         <div className="flex-auto lg:flex-1 p-8 flex flex-col justify-between">
           <div>
             <h2 className="font-semibold text-xl">{post.frontmatter.title}</h2>
-            <p className="mt-2">
+            <hr className="h-1 mt-4 bg-gradient-to-br from-teal-400 to-emerald-300" />
+            <p className="mt-8">
               {post.frontmatter.summary ?? post.frontmatter.description}
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <Image
+          <div className="flex items-center gap-4 mt-8">
+            <AuthorImage
               src={post.frontmatter.author.imageSrc}
-              alt={post.frontmatter.author.name}
-              width={32}
-              height={32}
-              className="rounded-full h-[32px] border-2 border-stone-200"
+              name={post.frontmatter.author.name}
+              size={32}
             />
             <DateDisplay dateStr={post.frontmatter.date} />
           </div>

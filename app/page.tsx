@@ -38,15 +38,15 @@ export default async function Home() {
 
   return (
     <div>
-      <div className="block md:hidden">
+      <div className="block lg:hidden">
         <PostCard post={posts[0]} variant="sm-summary" />
       </div>
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <PostCard post={posts[0]} variant="full" />
       </div>
       {posts.length > 1 && (
         <>
-          <h2 className="mt-8 text-3xl font-semibold">recent posts</h2>
+          <h2 className="mt-16 text-3xl font-semibold">recent posts</h2>
           <div className="mt-4 grid grid-flow-row grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
             {posts.slice(1).map((post) => (
               <PostCard key={post.slug} post={post} variant="sm" />

@@ -24,6 +24,10 @@
   @apply mt-2;
 }
 
+.post hr {
+  @apply h-1 mt-4 bg-gradient-to-br from-teal-400 to-emerald-300 border-0;
+}
+
 .post ul {
   @apply list-disc list-inside my-2;
 }

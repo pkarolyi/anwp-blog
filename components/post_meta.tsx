@@ -1,6 +1,7 @@
 import { Frontmatter } from "@/validators/mdx";
 import Image from "next/image";
 import DateDisplay from "./date_display";
+import AuthorImage from "./author_image";
 
 export default function PostMeta({
   frontmatter,
@@ -14,12 +15,10 @@ export default function PostMeta({
       className="!text-stone-900 hover:!text-stone-900"
     >
       <div className="flex items-center gap-4">
-        <Image
+        <AuthorImage
           src={frontmatter.author.imageSrc}
-          alt={`Image of ${frontmatter.author.name}`}
-          width={64}
-          height={64}
-          className="rounded-full h-[64px] border-2 border-stone-200"
+          name={frontmatter.author.name}
+          size={64}
         />
         <div>
           <p className="font-semibold">{frontmatter.author.name}</p>
