@@ -1,0 +1,149 @@
+---
+title: "Self hosting a remote cache server for Turborepo"
+author:
+  name: Peter Karolyi
+  imageSrc: /authors/pkarolyi.jpg
+  url: "https://github.com/pkarolyi"
+date: "2024-05-08"
+coverSrc: "/covers/turbo.png"
+description: Learn how to host your own remote cache server for Turborepo.
+summary: "Turborepo is a high performance build system and monorepo management tool for JavaScript and TypeScript codebases. It's main feature is the use of remote caching to speed up running lint, build or test tasks. This guide shows you how to host your own remote cache server to get the benefits of remote caching on your own terms..."
+tags: [devops, node.js, turborepo, docker]
+---
+
+## Introduction
+
+[Turborepo](https://turbo.build/repo) is a high performance build system and monorepo management tool for JavaScript and TypeScript codebases. It's main feature is the use of remote caching to speed up running `lint`, `build` or `test` tasks. The problem is that out of the box the remote caching features require a Vercel subscription to work. This guide shows you how to host your own _remote cache server_ to get the benefits of remote caching on your own terms.
+
+## Caching in Turborepo
+
+Before reading this article you should understand how Turborepo caches tasks. The best place to start is the [official documentation](https://turbo.build/repo/docs/core-concepts/caching). You may also want to check out the page about [remote caching](https://turbo.build/repo/docs/core-concepts/remote-caching).
+
+## Benefits of remote caching
+
+Turborepo caches the jobs it runs on your machine under `node_modules/.cache/turbo`. When running the same task on the same state of your repository, instead of running the task again, Turbo will simply load the artifacts and logs from the cache and replay them.
+
+![Turborepo remote cache diagram](/content/turbo-remote.png)
+_Turborepo remote cache (image from [turbo.build](https://turbo.build/repo/docs/core-concepts/remote-caching#a-single-shared-cache))_
+
+Using the [remote cache feature](https://turbo.build/repo/docs/core-concepts/remote-caching) allows you to share this cache with other machines that are running builds or tests on your project. These other machines can be your colleagues' workstations or the CI server running your pipelines. This means that a given job for a given state theoretically only needs to be run once across your entire team and deployment process. 
+
+Using Turborepo's remote cache in your CI/CD pipelines has advantages over using your build servers' built-in caching mechanisms. If you cache `node_modules/.cache/turbo` instead of using a remote cache server the CI server has to load all artifacts from the cache before each run, as it cannot know which artifacts will be needed before the job is run. Using a remote cache server means that Turborepo will only download the required cache artifacts during the build process.
+
+## Setting up a remote cache server
+
+Luckily for us, the [API specification](https://turbo.build/api/remote-cache-spec) for the remote cache server is available publicly and there are multiple open-source implementations available. The most popular one currently is [ducktors/turborepo-remote-cache](https://github.com/ducktors/turborepo-remote-cache). In this guide I will be using my implementation, [pkarolyi/garden-snail](https://github.com/pkarolyi/garden-snail) but the setup is very similar for every compatible server.
+
+To use [pkarolyi/garden-snail](https://hub.docker.com/r/pkarolyi/garden-snail) you can just start the provided Docker image:
+
+```bash
+$ docker run \
+    -e AUTH_TOKENS=change_this \
+    -e STORAGE_PROVIDER=local \
+    -e LOCAL_STORAGE_PATH=blobs \
+    -v "$(pwd)"/blobs:/garden-snail/blobs \
+    -p 3000:3000 \
+    pkarolyi/garden-snail
+```
+
+You will need to provide one or more tokens that you will be able to use to authenticate your clients with the server. Also you will need to set up a storage provider to store the cached artifacts. _Garden Snail_ supports `local` and `s3` storages. The local option stores the artifacts locally in your container (or a volume), the s3 option lets you store your artifacts in AWS S3 or an S3 compatible storage provider. The easiest way to prototype this is to use the local storage option and create a docker volume to mount a directory, this is what the above command does. 
+
+### Verify your server
+
+After starting the server you can verify that it is working by running querying the  
+`/v8/artifacts/status` endpoint. For example by running `curl`:
+
+```bash
+$ curl -H "Authorization: Bearer change_this" http://localhost:3000/v8/artifacts/status
+  
+'{"status":"enabled"}'
+```
+
+If you see `{"status":"enabled"}{:json}` that means that the server is running and you set up your token correctly.
+
+### Test storage
+
+The actual API provided by the server is pretty simple, just two endpoints are actually required to make Turborepo's remote caching work. You can optionally test these endpoints yourself and see what goes on in the background when Turbo uses your remote cache server.
+
+The first endpoint is `PUT /v8/artifacts/:hash?teamId=<teamId>`. This endpoint additionally requires your token to authenticate and expects an a body of content-type `application/octet-stream`. To test it first you should have a file (any file) that you want the remote server to save. If you don't have any at hand you can easily generate a file of a given size with random content with the following command:
+
+```bash
+$ dd if=/dev/random of=filename.bin bs=1M count=10
+  
+10+0 records in
+10+0 records out
+10485760 bytes transferred in 0.018264 secs (574121770 bytes/sec)
+``` 
+
+This created a 10MiB large file with random content. You can use this to test your server. Let's write a `curl` command to upload this file to the cache server:
+
+```bash
+$ curl -X PUT \
+    --header 'Authorization: Bearer change_this' \
+    --header 'Content-Type: application/octet-stream' \
+    --data-binary '@filename.bin' \
+    'http://localhost:3000/v8/artifacts/12345678?teamId=team_test'
+  
+'{"urls":["team_test/12345678"]}'
+```
+
+If the upload is successful you should get `{"urls":["team_test/12345678"]}{:json}` as a response. You should also check the storage location you specified. _Garden Snail_ will create a directory named after your team id, in this case `team_test` and place the uploaded file there with the hash `12345678` as your filename.
+
+You can then test the download of artifacts with the following command:
+
+```bash
+$ curl -X GET \
+    --header 'Authorization: Bearer change_this' \
+    --output 'downloaded.bin' \
+    'http://localhost:3001/v8/artifacts/12345678?teamId=team_test'
+```
+
+You should see the file being downloaded and then saved to `downloaded.bin`. To test if this file is the same as the one you uploaded you can run:
+
+```bash
+diff filename.bin downloaded.bin
+```
+
+If everything went well then this command should output nothing.
+
+## Setting up Turbo to use your remote cache server
+
+First set up your project to use Turborepo if you haven't done so already. See the [official documentation](https://turbo.build/repo/docs/getting-started/add-to-project) on how to do that. If you used Vercel's remote cache server before then delete `.turbo/config.json` to make sure those settings won't interfere with the custom remote cache.
+
+For setting up your local environment you can either use environment variables to configure Turbo:
+
+```bash
+# Set the base URL for Remote Cache.
+TURBO_API=
+
+# Your team id (must start with "team_")
+TURBO_TEAMID=
+
+# One of the tokens from the server's "AUTH_TOKENS"
+TURBO_TOKEN=
+
+# If you are on a slow connection you may need to set this (timeout is in seconds, defaults to 60)
+TURBO_REMOTE_CACHE_TIMEOUT=
+```
+
+Or you can create a custom `.turbo/config.json` with the following content:
+
+```json
+{
+  "teamId": "team_test",
+  "token": "change_this",
+  "apiUrl": "http://localhost:3000"
+}
+```
+
+After doing either try removing your local cache files (`node_modules/.cache` and if you are using NextJs then also `.next`) and running a build with Turbo. If you see "remote caching enabled" printed that means that it is using the cache. Also you should see some logs from the remote cache server.
+
+After running the build once, delete the local cache files again and run the build again without any changes. You should see `FULL TURBO` printed as Turborepo uses your remote cache to download the artifacts instead of building them again.
+
+Congratulations, you have set up your custom self hosted remote cache server for Turborepo!
+
+## Next steps
+
+To take full advantage of remote caching you should also set up your CI/CD workflows to also use your cache server. You should also explore other storage options to find the one that fits your needs best. For all configuration possibilities, check-out the [repository's readme](https://github.com/pkarolyi/garden-snail). 
+
+If you find any bugs, have any issues or have suggestions, please don't hesitate to open an Issue on the project's Github page.

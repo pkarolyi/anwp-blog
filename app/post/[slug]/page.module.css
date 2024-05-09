@@ -9,11 +9,11 @@
 }
 
 .post h2 {
-  @apply text-3xl font-semibold mt-10 border-b-stone-200 border-b-2 pb-1;
+  @apply text-3xl font-semibold mt-10 border-b-stone-200 border-b-2 mb-2;
 }
 
 .post h3 {
-  @apply text-2xl font-semibold mt-4;
+  @apply text-2xl font-semibold mt-10 mb-2;
 }
 
 .post h4 {
@@ -21,11 +21,7 @@
 }
 
 .post p {
-  @apply mt-2;
-}
-
-.post hr {
-  @apply h-1 mt-4 bg-gradient-to-br from-teal-400 to-emerald-300 border-0;
+  @apply my-6 leading-normal;
 }
 
 .post ul {
@@ -41,7 +37,7 @@
 }
 
 .post a {
-  @apply text-sky-700 hover:text-sky-800;
+  @apply text-teal-700 hover:text-teal-800 underline;
 }
 
 .post h1 a,
@@ -53,12 +49,16 @@
   @apply text-stone-900 no-underline hover:text-stone-900;
 }
 
+.post p img + em {
+  @apply inline-block w-full text-center text-base;
+}
+
 .post pre {
-  @apply my-4 py-2 rounded-lg !bg-stone-100 overflow-x-scroll;
+  @apply my-4 py-2 rounded-lg !bg-stone-200 overflow-x-scroll;
 }
 
 .post code {
-  @apply !bg-stone-100 !text-base sm:!text-lg px-2 rounded-md;
+  @apply !bg-stone-200 !text-base sm:!text-lg px-2 rounded-md;
 }
 
 .post pre > code {

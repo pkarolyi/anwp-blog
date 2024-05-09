@@ -16,7 +16,7 @@ export default function AuthorImage({
       alt={`Image of ${name}`}
       width={size}
       height={size}
-      className="rounded-full border-2 border-emerald-300"
+      className="rounded-full border-2 border-emerald-500"
     />
   );
 }

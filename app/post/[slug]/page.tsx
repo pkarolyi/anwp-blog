@@ -80,16 +80,17 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <div className="pb-6 px-4 xl:flex xl:justify-center xl:gap-12 xl:px-0">
-      <div className="xl:grow xl:max-w-6xl">
-        <article className={`${styles.post} max-w-4xl mx-auto`}>
-          <h1>{f.title}</h1>
+      <div className="xl:grow xl:w-[56rem] xl:max-w-[56rem] ">
+        <article className="mx-auto xl:mx-0">
+          <h1 className="text-4xl font-bold">{f.title}</h1>
           <div className="block xl:hidden mt-6">
             <PostMeta frontmatter={f} />
           </div>
-          {content}
+          <hr className="h-1 mt-4 bg-gradient-to-br from-teal-700 to-emerald-500 border-0" />
+          <div className={styles.post}>{content}</div>
         </article>
       </div>
-      <div className="w-full max-w-xs hidden xl:block">
+      <div className="hidden w-[24rem] max-w-[24rem] xl:block">
         <PostMeta frontmatter={f} />
       </div>
     </div>
