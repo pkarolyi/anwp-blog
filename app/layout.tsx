@@ -1,10 +1,8 @@
+import Navbar from "@/components/navbar";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
-import Navbar from "@/components/navbar";
-
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
